@@ -3,9 +3,9 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 
-import "src/WorkshopBad.sol";
+import "src/WorkshopFixed.sol";
 
-contract WorkshopTest is Test {
+contract WorkshopFixedTest is Test {
     Workshop workshop;
 
     address alice = makeAddr("alice");
@@ -127,7 +127,7 @@ contract WorkshopTest is Test {
         mint0 = bound(mint0, 0, maxAmount);
         maxAmount -= mint0;
 
-        uint256 value0 = mint0 * price / 1e18;
+        uint256 value0 = (mint0 * price + 1e18 - 1) / 1e18;
 
         vm.prank(alice);
         workshop.mint{value: value0}(alice, mint0);
@@ -135,13 +135,13 @@ contract WorkshopTest is Test {
         mint1 = bound(mint1, 0, maxAmount);
         maxAmount -= mint1;
 
-        uint256 value1 = mint1 * price / 1e18;
+        uint256 value1 = (mint1 * price + 1e18 - 1) / 1e18;
 
         vm.prank(bob);
         workshop.mint{value: value1}(bob, mint1);
 
         uint256 minted = workshop.totalSupply();
-        uint256 expectedValue = minted * price / 1e18;
+        uint256 expectedValue = (minted * price + 1e18 - 1) / 1e18;
 
         assertGe(address(workshop).balance, expectedValue, "test_fuzz_Mint::1");
         assertEq(workshop.balanceOf(alice), mint0, "test_fuzz_Mint::2");
@@ -155,7 +155,7 @@ contract WorkshopTest is Test {
         amount = bound(amount, 0, maxAmount);
         maxAmount -= amount;
 
-        uint256 value0 = amount * price / 1e18;
+        uint256 value0 = (amount * price + 1e18 - 1) / 1e18;
 
         vm.prank(alice);
         workshop.mint{value: value0}(alice, amount);
@@ -173,8 +173,8 @@ contract WorkshopTest is Test {
         mint0 = bound(mint0, 0, 100e18);
         mint1 = bound(mint1, 0, 100e18);
 
-        uint256 value0 = mint0 * price / 1e18;
-        uint256 value1 = mint1 * price / 1e18;
+        uint256 value0 = (mint0 * price + 1e18 - 1) / 1e18;
+        uint256 value1 = (mint1 * price + 1e18 - 1) / 1e18;
 
         vm.startPrank(alice);
         workshop.mint{value: value0}(alice, mint0);
